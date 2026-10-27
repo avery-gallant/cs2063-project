@@ -1,47 +1,81 @@
 package ca.unb.mobiledev.ecampus
 
 import android.os.Bundle
+import android.view.View
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import ca.unb.mobiledev.ecampus.ui.theme.EcampusTheme
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import java.time.LocalDate
+import java.time.YearMonth
+import java.time.format.DateTimeFormatter
 
-class MainActivity : ComponentActivity() {
+
+public class MainActivity : AppCompatActivity(), CalendarAdapter.OnItemListener
+{
+    private lateinit var monthYearText : TextView
+    private lateinit var calendarRecyclerView : RecyclerView
+    private lateinit var selectedDate : LocalDate
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent {
-            EcampusTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+        setContentView(R.layout.layout)
+        monthYearText = findViewById(R.id.monthYearTV)
+        calendarRecyclerView= findViewById(R.id.caledarRecyclerView)
+        selectedDate  = LocalDate.now()
+
+    }
+    private fun setMonthView() {
+        monthYearText.setText(monthYearFromDate(selectedDate))
+        val daysInMonth: ArrayList<String?> = daysInMonthArray(selectedDate)
+
+        val calendarAdapter = CalendarAdapter(daysInMonth as ArrayList<String>, this)
+        val layoutManager: RecyclerView.LayoutManager =
+            GridLayoutManager(getApplicationContext(), 7)
+        calendarRecyclerView.setLayoutManager(layoutManager)
+        calendarRecyclerView.setAdapter(calendarAdapter)
+    }
+    private fun daysInMonthArray(date: LocalDate): ArrayList<String?> {
+        val daysInMonthArray = ArrayList<String?>()
+        val yearMonth = YearMonth.from(date)
+
+        val daysInMonth = yearMonth.lengthOfMonth()
+
+        val firstOfMonth = selectedDate.withDayOfMonth(1)
+        val dayOfWeek = firstOfMonth.getDayOfWeek().getValue()
+
+        for (i in 1..42) {
+            if (i <= dayOfWeek || i > daysInMonth + dayOfWeek) {
+                daysInMonthArray.add("")
+            } else {
+                daysInMonthArray.add((i - dayOfWeek).toString())
             }
         }
+        return daysInMonthArray
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+    private fun monthYearFromDate(date: LocalDate): String {
+        val formatter = DateTimeFormatter.ofPattern("MMMM yyyy")
+        return date.format(formatter)
+    }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    EcampusTheme {
-        Greeting("Android")
+    fun previousMonthAction(view: View?) {
+        selectedDate = selectedDate.minusMonths(1)
+        setMonthView()
+    }
+
+    fun nextMonthAction(view: View?) {
+        selectedDate = selectedDate.plusMonths(1)
+        setMonthView()
+    }
+
+    public override fun onItemClick(position: Int, dayText: String) {
+        if (dayText != "") {
+            val message = "Selected Date " + dayText + " " + monthYearFromDate(selectedDate)
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+        }
     }
 }
