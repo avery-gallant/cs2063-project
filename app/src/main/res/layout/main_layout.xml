@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+    <LinearLayout
+        android:id="@+id/mainview"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity"
+        android:background="@color/white">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="40sp"
+            android:text="CourseList"
+            android:textAlignment="center"
+            android:background="@color/black"
+            android:textColor="@color/white"
+            android:paddingBottom="5dp"/>
+    </LinearLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Space
+            android:id="@+id/space2"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/round_button"
+            android:backgroundTint="@color/green"
+            android:onClick="newCourse"
+            android:paddingBottom="6dp"
+            android:text="+"
+            android:textAlignment="center"
+            android:textSize="40dp"
+            app:layout_constraintBottom_toTopOf="@+id/space"
+            app:layout_constraintEnd_toStartOf="@+id/space" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:onClick="toCalendar"
+            android:text="🗓️"
+            android:textSize="30dp"
+            android:background="@drawable/round_button"
+            android:backgroundTint="@color/gray"
+            app:layout_constraintBottom_toTopOf="@+id/space2"
+            app:layout_constraintStart_toEndOf="@+id/space2" />
+
+        <Space
+            android:id="@+id/space"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

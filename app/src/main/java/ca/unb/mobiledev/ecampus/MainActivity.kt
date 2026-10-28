@@ -1,81 +1,173 @@
 package ca.unb.mobiledev.ecampus
 
+import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.PopupWindow
 import android.widget.TextView
-import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import java.time.LocalDate
-import java.time.YearMonth
-import java.time.format.DateTimeFormatter
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
+import com.google.android.material.textfield.TextInputEditText
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.File
+import kotlin.math.max
 
+var maxId:Int = 0
 
-public class MainActivity : AppCompatActivity(), CalendarAdapter.OnItemListener
+data class Course(
+    val name: String,
+    val description: String,
+    val id: Int
+)
+public class MainActivity : AppCompatActivity()
 {
-    private lateinit var monthYearText : TextView
-    private lateinit var calendarRecyclerView : RecyclerView
-    private lateinit var selectedDate : LocalDate
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.layout)
-        monthYearText = findViewById(R.id.monthYearTV)
-        calendarRecyclerView= findViewById(R.id.caledarRecyclerView)
-        selectedDate  = LocalDate.now()
+        setContentView(R.layout.main_layout)
+        loadSavedCourses()
+
+        val root = findViewById<View>(R.id.mainview)
+        ViewCompat.setOnApplyWindowInsetsListener(root.parent as View) { view, insets ->
+            val systemBars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or
+                        WindowInsetsCompat.Type.displayCutout()
+            )
+
+            view.updatePadding(
+                top = systemBars.top
+            )
+
+            insets
+        }
 
     }
-    private fun setMonthView() {
-        monthYearText.setText(monthYearFromDate(selectedDate))
-        val daysInMonth: ArrayList<String?> = daysInMonthArray(selectedDate)
 
-        val calendarAdapter = CalendarAdapter(daysInMonth as ArrayList<String>, this)
-        val layoutManager: RecyclerView.LayoutManager =
-            GridLayoutManager(getApplicationContext(), 7)
-        calendarRecyclerView.setLayoutManager(layoutManager)
-        calendarRecyclerView.setAdapter(calendarAdapter)
+    fun toCalendar(view: View) {
+        val intent = Intent(this@MainActivity, CalendarActivity::class.java)
+        startActivity(intent)
     }
-    private fun daysInMonthArray(date: LocalDate): ArrayList<String?> {
-        val daysInMonthArray = ArrayList<String?>()
-        val yearMonth = YearMonth.from(date)
+    fun deleteCourse(view: View) {
+        val parentView = view.parent as View
+        val parentId = parentView.id
+        (parentView.parent as? ViewGroup)?.removeView(parentView)
+        removeCourse(parentId)
 
-        val daysInMonth = yearMonth.lengthOfMonth()
+    }
+    fun newCourse(view: View) {
+        val popupView = layoutInflater.inflate(R.layout.new_course_popup, null)
 
-        val firstOfMonth = selectedDate.withDayOfMonth(1)
-        val dayOfWeek = firstOfMonth.getDayOfWeek().getValue()
+        val popup = PopupWindow(
+            popupView,
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
+        )
 
-        for (i in 1..42) {
-            if (i <= dayOfWeek || i > daysInMonth + dayOfWeek) {
-                daysInMonthArray.add("")
-            } else {
-                daysInMonthArray.add((i - dayOfWeek).toString())
+        popupView.findViewById<Button>(R.id.buttonCancel)
+            .setOnClickListener {
+                popup.dismiss()
+            }
+
+        popupView.findViewById<Button>(R.id.buttonAccept)
+            .setOnClickListener {
+                val name = popupView.findViewById<TextInputEditText>(R.id.popupCourseName).text.toString()
+                if (name.trim() !=""){
+                    popup.dismiss()
+                    maxId+=1
+                    addCourse(Course(name.trim(),"",maxId ))
+                }
+
+            }
+
+        popup.showAtLocation(
+            findViewById(R.id.mainview),
+            Gravity.CENTER,
+            0,
+            0
+        )
+
+        popup.isOutsideTouchable = false
+        popup.elevation = 8f
+    }
+    fun addCourse(newCourse: Course){
+        val file = File(filesDir, "courses.json")
+        val jsonArray = if (file.exists()) {
+            JSONArray(file.readText())
+        } else {
+            JSONArray()
+        }
+
+        val jsonObject = JSONObject().apply {
+            put("name", newCourse.name)
+            put("description", newCourse.description)
+            put("id", maxId)
+        }
+        jsonArray.put(jsonObject)
+        file.writeText(jsonArray.toString())
+
+        val container = findViewById<LinearLayout>(R.id.mainview)
+
+        val newView = layoutInflater.inflate(
+            R.layout.course_list_entry,
+            container,
+            false
+        )
+        container.addView(newView,1)
+
+        newView.findViewById<TextView>(R.id.courseName).text = newCourse.name
+        newView.setId(jsonObject.getString("id").toInt())
+    }
+    fun removeCourse(courseId: Int){
+        val file = File(filesDir, "courses.json")
+        val jsonArray = if (file.exists()) {
+            JSONArray(file.readText())
+        } else {
+            return
+        }
+
+        for (i in jsonArray.length() - 1 downTo 0) {
+            val item = jsonArray.getJSONObject(i)
+
+            if (item.optString("id") == courseId.toString()) {
+                jsonArray.remove(i)
             }
         }
-        return daysInMonthArray
-    }
+        file.writeText(jsonArray.toString())
 
-    private fun monthYearFromDate(date: LocalDate): String {
-        val formatter = DateTimeFormatter.ofPattern("MMMM yyyy")
-        return date.format(formatter)
     }
+    fun loadSavedCourses(){
+        val file = File(filesDir, "courses.json")
+        val jsonArray = if (file.exists()) {
+            JSONArray(file.readText())
+        } else {
+            return
+        }
 
-    fun previousMonthAction(view: View?) {
-        selectedDate = selectedDate.minusMonths(1)
-        setMonthView()
-    }
+        val container = findViewById<LinearLayout>(R.id.mainview)
 
-    fun nextMonthAction(view: View?) {
-        selectedDate = selectedDate.plusMonths(1)
-        setMonthView()
-    }
-
-    public override fun onItemClick(position: Int, dayText: String) {
-        if (dayText != "") {
-            val message = "Selected Date " + dayText + " " + monthYearFromDate(selectedDate)
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+        for (i in 0 until jsonArray.length()) {
+            val jsonObject = jsonArray.getJSONObject(i)
+            val name = jsonObject.getString("name")
+            maxId = max(maxId,jsonObject.getString("id").toInt())
+            val newView = layoutInflater.inflate(
+                R.layout.course_list_entry,
+                container,
+                false
+            )
+            container.addView(newView, 1)
+            newView.findViewById<TextView>(R.id.courseName).text = name
+            newView.setId(jsonObject.getString("id").toInt())
         }
     }
 }
