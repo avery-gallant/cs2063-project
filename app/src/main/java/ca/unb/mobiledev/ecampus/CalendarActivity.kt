@@ -1,7 +1,9 @@
 package ca.unb.mobiledev.ecampus
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -26,6 +28,11 @@ public class CalendarActivity : AppCompatActivity(), CalendarAdapter.OnItemListe
         calendarRecyclerView= findViewById(R.id.caledarRecyclerView)
         selectedDate  = LocalDate.now()
         setMonthView()
+        val navBar = findViewById<View>(R.id.nav)
+
+        navBar.findViewById<Button>(R.id.calcNav).setOnClickListener {
+            toCourse()
+        }
 
     }
     private fun setMonthView() {
@@ -77,5 +84,9 @@ public class CalendarActivity : AppCompatActivity(), CalendarAdapter.OnItemListe
             val message = "Selected Date " + dayText + " " + monthYearFromDate(selectedDate)
             Toast.makeText(this, message, Toast.LENGTH_LONG).show()
         }
+    }
+    fun toCourse() {
+        val intent = Intent(this@CalendarActivity, CoursePageActivity::class.java)
+        startActivity(intent)
     }
 }

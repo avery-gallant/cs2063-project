@@ -2,8 +2,6 @@ package ca.unb.mobiledev.ecampus
 
 import kotlinx.parcelize.Parcelize
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.Gravity
@@ -32,7 +30,7 @@ data class Course(
     val description: String,
     val id: Int
 ) : Parcelable
-public class MainActivity : AppCompatActivity()
+public class CoursePageActivity : AppCompatActivity()
 {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,11 +51,15 @@ public class MainActivity : AppCompatActivity()
 
             insets
         }
+        val navBar = findViewById<View>(R.id.nav)
 
+        navBar.findViewById<Button>(R.id.homeNav).setOnClickListener {
+            toCalendar()
+        }
     }
 
-    fun toCalendar(view: View) {
-        val intent = Intent(this@MainActivity, CalendarActivity::class.java)
+    fun toCalendar() {
+        val intent = Intent(this@CoursePageActivity, CalendarActivity::class.java)
         startActivity(intent)
     }
     fun deleteCourse(view: View) {
@@ -176,14 +178,14 @@ public class MainActivity : AppCompatActivity()
     fun openCoursePage(view:View){
         val parentView = view.parent as View
         val parentId = parentView.id.toString()
-        val course = getCOurseInfo(parentId)
+        val course = getCourseInfo(parentId)
 
         val intent = Intent(this, MainCourseActivity::class.java)
         intent.putExtra("course", course)
         startActivity(intent)
 
     }
-    fun getCOurseInfo(parentId:String): Course? {
+    fun getCourseInfo(parentId:String): Course? {
         val file = File(filesDir, "courses.json")
         val jsonArray = JSONArray(file.readText())
 
@@ -201,4 +203,5 @@ public class MainActivity : AppCompatActivity()
         }
         return null
     }
+
 }

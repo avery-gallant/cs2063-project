@@ -27,13 +27,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Space
-            android:id="@+id/space2"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
         <Button
             android:id="@+id/button2"
             android:layout_width="80dp"
@@ -48,23 +41,18 @@
             app:layout_constraintBottom_toTopOf="@+id/space"
             app:layout_constraintEnd_toStartOf="@+id/space" />
 
-        <Button
-            android:id="@+id/button3"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:onClick="toCalendar"
-            android:text="🗓️"
-            android:textSize="30dp"
-            android:background="@drawable/round_button"
-            android:backgroundTint="@color/gray"
-            app:layout_constraintBottom_toTopOf="@+id/space2"
-            app:layout_constraintStart_toEndOf="@+id/space2" />
-
         <Space
             android:id="@+id/space"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/nav"
             app:layout_constraintEnd_toEndOf="parent" />
+
+        <include
+            android:id="@+id/nav"
+            layout="@layout/nav_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
