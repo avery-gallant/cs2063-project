@@ -1,9 +1,11 @@
 package ca.unb.mobiledev.ecampus
 
+import kotlinx.parcelize.Parcelize
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -24,11 +26,12 @@ import kotlin.math.max
 
 var maxId:Int = 0
 
+@Parcelize
 data class Course(
     val name: String,
     val description: String,
     val id: Int
-)
+) : Parcelable
 public class MainActivity : AppCompatActivity()
 {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -169,5 +172,33 @@ public class MainActivity : AppCompatActivity()
             newView.findViewById<TextView>(R.id.courseName).text = name
             newView.setId(jsonObject.getString("id").toInt())
         }
+    }
+    fun openCoursePage(view:View){
+        val parentView = view.parent as View
+        val parentId = parentView.id.toString()
+        val course = getCOurseInfo(parentId)
+
+        val intent = Intent(this, MainCourseActivity::class.java)
+        intent.putExtra("course", course)
+        startActivity(intent)
+
+    }
+    fun getCOurseInfo(parentId:String): Course? {
+        val file = File(filesDir, "courses.json")
+        val jsonArray = JSONArray(file.readText())
+
+        val container = findViewById<LinearLayout>(R.id.mainview)
+
+        for (i in 0 until jsonArray.length()) {
+            val jsonObject = jsonArray.getJSONObject(i)
+
+            val id = jsonObject.getString("id")
+
+            if (id == parentId){
+                val name = jsonObject.getString("name")
+                return Course(name, "", id.toInt())
+            }
+        }
+        return null
     }
 }

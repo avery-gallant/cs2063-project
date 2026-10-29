@@ -13,7 +13,8 @@
         android:text=""
         app:layout_constraintEnd_toStartOf="@+id/courseDelete"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="28dp" />
+        tools:layout_editor_absoluteY="28dp"
+        android:onClick="openCoursePage"/>
 
     <TextView
         android:id="@+id/courseName"
