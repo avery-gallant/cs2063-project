@@ -5,7 +5,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/orange">
+    android:background="@color/black">
+
     <LinearLayout
         android:id="@+id/mainview"
         android:orientation="vertical"
@@ -13,58 +14,125 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity"
         android:background="@color/white">
+
         <TextView
+            android:id="@+id/top_banner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="40sp"
-            android:text="Course List"
+            android:layout_height="50dp"
+            android:background="#f8860c"
+            android:fontFamily="sans-serif"
+            android:paddingVertical="20px"
+            android:paddingBottom="5dp"
+            android:text="CourseList"
             android:textAlignment="center"
-            android:background="@color/orange"
             android:textColor="@color/black"
-            android:paddingBottom="5dp"/>
+            android:textSize="24sp" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- Bottom-left anchor space -->
+            <Space
+                android:id="@+id/space2"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <!-- Bottom-right anchor space -->
+            <Space
+                android:id="@+id/space"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- "+" button: above the bottom-right space, anchored to the right edge -->
+
+            <!-- "•••" button: to the left of the "+" button, aligned to bottom of space -->
+
+            <!-- Calculator button: bottom-left, anchored to start and bottom -->
+
+            <!-- Calendar button: centered horizontally between the two spaces -->
+
+            <!-- Bottom orange banner: pinned to bottom, full width -->
+
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="58dp"
+                android:layout_height="55dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="36dp"
+                android:background="@drawable/round_button"
+                android:backgroundTint="#F8860C"
+                android:onClick="newCourse"
+                android:paddingBottom="6dp"
+                android:text="+"
+                android:textAlignment="center"
+                android:textSize="40dp"
+                app:layout_constraintBottom_toTopOf="@+id/space"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <Button
+                android:id="@+id/button7"
+                android:layout_width="55dp"
+                android:layout_height="49dp"
+                android:layout_marginEnd="24dp"
+                android:background="@drawable/round_button"
+                android:text="•••"
+                android:textSize="34sp"
+                app:layout_constraintBottom_toBottomOf="@+id/space"
+                app:layout_constraintEnd_toStartOf="@+id/space"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <Button
+                android:id="@+id/button4"
+                android:layout_width="55dp"
+                android:layout_height="49dp"
+                android:layout_marginStart="48dp"
+                android:background="@drawable/round_button"
+                android:text="🧮"
+                android:textSize="34sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.998" />
+
+            <Button
+                android:id="@+id/button5"
+                android:layout_width="55dp"
+                android:layout_height="49dp"
+                android:background="@drawable/round_button"
+                android:onClick="toCalendar"
+                android:text="📅"
+                android:textSize="34sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/space"
+                app:layout_constraintStart_toEndOf="@+id/space2"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <TextView
+                android:id="@+id/top_banner3"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:background="#f8860c"
+                android:fontFamily="sans-serif"
+                android:paddingVertical="20px"
+                android:paddingBottom="5dp"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-        <Space
-            android:id="@+id/space2"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:background="@drawable/round_button"
-            android:backgroundTint="@color/green"
-            android:onClick="newCourse"
-            android:paddingBottom="6dp"
-            android:text="+"
-            android:textAlignment="center"
-            android:textSize="40dp"
-            app:layout_constraintBottom_toTopOf="@+id/space"
-            app:layout_constraintEnd_toStartOf="@+id/space" />
-
-        <Button
-            android:id="@+id/button3"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:onClick="toCalendar"
-            android:text="🗓️"
-            android:textSize="30dp"
-            android:background="@drawable/round_button"
-            android:backgroundTint="@color/gray"
-            app:layout_constraintBottom_toTopOf="@+id/space2"
-            app:layout_constraintStart_toEndOf="@+id/space2" />
-
-        <Space
-            android:id="@+id/space"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
